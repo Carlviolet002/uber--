@@ -1,0 +1,61 @@
+# ==================== mall-dispatch real 配置（MySQL + Redis + RabbitMQ + Nacos） ====================
+# 启动方式：--spring.profiles.active=real
+server:
+  port: 8084
+
+spring:
+  application:
+    name: mall-dispatch
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mall_dispatch?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      database: 0
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+mall:
+  mock:
+    enabled: false
+  services:
+    user-url: http://localhost:8081
+    order-url: http://localhost:8083
+  dispatch:
+    strategy: B
+    batch-interval-ms: 5000
+    batch-initial-delay-ms: 15000
+    max-matrix: 20
+    weights:
+      w1: 1.0
+      w2: 0.5
+      w3: 500.0
+      w4: 0.0
+      w5: 0.0
+
+logging:
+  level:
+    com.carl.mall: info

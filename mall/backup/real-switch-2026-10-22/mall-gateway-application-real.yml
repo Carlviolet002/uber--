@@ -1,0 +1,37 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        server-addr: localhost:8848
+        namespace: ${NACOS_NAMESPACE:}
+    gateway:
+      routes:
+        - id: mall-user-route
+          uri: lb://mall-user
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=1
+        - id: mall-shop-route
+          uri: lb://mall-shop
+          predicates:
+            - Path=/api/shop/**
+          filters:
+            - StripPrefix=1
+        - id: mall-order-route
+          uri: lb://mall-order
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - StripPrefix=1
+        - id: mall-dispatch-route
+          uri: lb://mall-dispatch
+          predicates:
+            - Path=/api/dispatch/**
+          filters:
+            - StripPrefix=1
+        - id: mall-order-ws-route
+          uri: lb://mall-order
+          predicates:
+            - Path=/ws/**

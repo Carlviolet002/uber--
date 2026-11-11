@@ -1,0 +1,25 @@
+# Maven
+target/
+*.class
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# Node
+node_modules/
+dist/
+
+# 敏感信息
+.env
+secrets.local.txt
+deploy/env-checklist.md
+
+# 日志与临时文件
+*.log
+logs/
+sim-output/

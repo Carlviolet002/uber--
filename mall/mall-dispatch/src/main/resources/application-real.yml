@@ -1,0 +1,86 @@
+# ==================== mall-dispatch real 配置（MySQL + Redis + RabbitMQ + Nacos） ====================
+# 启动方式：--spring.profiles.active=real
+server:
+  port: ${SERVER_PORT:8084}
+
+spring:
+  application:
+    name: mall-dispatch
+  # OP-9 Nacos 配置中心（默认关闭）：import 为空=不加载；设 MALL_NACOS_CONFIG_IMPORT=optional:nacos:mall-dispatch.yml 即启用
+  config:
+    import: ${MALL_NACOS_CONFIG_IMPORT:}
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${MALL_MYSQL_URL:jdbc:mysql://localhost:3306/mall_db?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true}
+    username: ${MALL_MYSQL_USER:mall}
+    password: ${MALL_MYSQL_PASS:mall@123}
+  sql:
+    init:
+      mode: never
+  data:
+    redis:
+      host: ${MALL_REDIS_HOST:localhost}
+      port: ${MALL_REDIS_PORT:6379}
+      password: ${MALL_REDIS_PASS:redispass}
+      database: 0
+  rabbitmq:
+    host: ${MALL_RABBIT_HOST:localhost}
+    port: ${MALL_RABBIT_PORT:5672}
+    username: ${MALL_RABBIT_USER:mall}
+    password: ${MALL_RABBIT_PASS:mall@123}
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        server-addr: ${MALL_NACOS_ADDR:localhost:8848}
+      # OP-9 配置中心（仅当上方 spring.config.import 非空时生效；默认不连）
+      config:
+        enabled: ${MALL_NACOS_CONFIG_ENABLED:false}
+        server-addr: ${MALL_NACOS_ADDR:localhost:8848}
+        file-extension: yaml
+        group: ${MALL_NACOS_CONFIG_GROUP:DEFAULT_GROUP}
+        refresh-enabled: true
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+mall:
+  mock:
+    enabled: false
+  # rider.assigned 绑定在 x.rider 交换机（q.order.rider ← x.rider:rider.assigned），
+  # 发布交换机必须显式指定为 x.rider，否则事件落入默认 x.order 无人消费
+  event:
+    exchange: ${MALL_EVENT_EXCHANGE:x.rider}
+  services:
+    user-url: ${MALL_SERVICES_USER_URL:http://localhost:8081}
+    order-url: ${MALL_SERVICES_ORDER_URL:http://localhost:8083}
+  dispatch:
+    strategy: ${MALL_DISPATCH_STRATEGY:B}
+    batch-interval-ms: ${MALL_DISPATCH_BATCH_INTERVAL_MS:5000}
+    batch-initial-delay-ms: ${MALL_DISPATCH_BATCH_INITIAL_DELAY_MS:15000}
+    max-matrix: ${MALL_DISPATCH_MAX_MATRIX:20}
+    weights:
+      w1: ${MALL_DISPATCH_WEIGHTS_W1:1.0}
+      w2: ${MALL_DISPATCH_WEIGHTS_W2:0.5}
+      w3: ${MALL_DISPATCH_WEIGHTS_W3:500.0}
+      w4: ${MALL_DISPATCH_WEIGHTS_W4:0.0}
+      w5: ${MALL_DISPATCH_WEIGHTS_W5:0.0}
+    # OP-6 策略 B 多因子权重（可被 t_dispatch_config 的 dispatch.bWeight.* 热覆盖）
+    b-weights:
+      distance: ${MALL_DISPATCH_BW_DISTANCE:1.0}
+      load: ${MALL_DISPATCH_BW_LOAD:0.3}
+      fairness: ${MALL_DISPATCH_BW_FAIRNESS:0.2}
+
+logging:
+  console:
+    encoding: UTF-8
+  level:
+    com.carl.mall: info

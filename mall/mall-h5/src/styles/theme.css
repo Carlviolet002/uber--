@@ -1,0 +1,44 @@
+/* ============================================================
+ * 美团风格主题：全局 CSS 变量 + Vant / Element Plus 变量覆盖
+ * 引入顺序：vant css → element css → 本文件（main.js 中保证）
+ * ============================================================ */
+:root {
+  /* ===== 美团风格基础变量 ===== */
+  --mt-yellow: #ffc300;
+  --mt-yellow-light: #ffd100;
+  --mt-gradient: linear-gradient(135deg, #ffc300, #ffb300);
+  --mt-price: #ff4d26;
+  --mt-success: #06ae56;
+  --mt-text: #222222;
+  --mt-text-2: #666666;
+  --mt-text-3: #999999;
+  --mt-bg: #f5f5f5;
+  --mt-radius: 16px;
+  --mt-radius-btn: 24px;
+
+  /* ===== 通用视觉令牌：统一卡片阴影与分割线，避免各页硬编码 ===== */
+  --mt-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --mt-shadow-up: 0 6px 18px rgba(0, 0, 0, 0.08);
+  --mt-line: #f0f0f0;
+  --mt-card-bg: #ffffff;
+
+  /* ===== Vant 变量覆盖（主色改美团黄，按钮文字深色保证对比度） ===== */
+  --van-primary-color: #ffc300;
+  --van-success-color: #06ae56;
+  --van-button-primary-background: #ffc300;
+  --van-button-primary-border-color: #ffc300;
+  --van-button-primary-color: #333333;
+  --van-button-default-color: #333333;
+  --van-tabbar-item-active-color: #ffc300;
+  --van-tabs-bottom-bar-color: #ffc300;
+  --van-nav-bar-icon-color: #333333;
+  --van-nav-bar-text-color: #333333;
+
+  /* ===== Element Plus 变量覆盖（主色改美团黄 + 派生 light 色阶） ===== */
+  --el-color-primary: #ffc300;
+  --el-color-primary-light-3: #ffd54d;
+  --el-color-primary-light-5: #ffe180;
+  --el-color-primary-light-7: #ffedb3;
+  --el-color-primary-light-8: #fff3cc;
+  --el-color-primary-light-9: #fff9e6;
+}

@@ -1,0 +1,55 @@
+spring:
+  # OP-9 Nacos 配置中心（默认关闭）：import 为空=不加载；设 MALL_NACOS_CONFIG_IMPORT=optional:nacos:mall-order.yml 启用
+  config:
+    import: ${MALL_NACOS_CONFIG_IMPORT:}
+  datasource:
+    url: ${MALL_MYSQL_URL:jdbc:mysql://localhost:3306/mall_db?serverTimezone=Asia/Shanghai&useSSL=false&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true}
+    username: ${MALL_MYSQL_USER:mall}
+    password: ${MALL_MYSQL_PASS:mall@123}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: never
+  data:
+    redis:
+      host: ${MALL_REDIS_HOST:localhost}
+      port: ${MALL_REDIS_PORT:6379}
+      password: ${MALL_REDIS_PASS:redispass}
+  rabbitmq:
+    host: ${MALL_RABBIT_HOST:localhost}
+    port: ${MALL_RABBIT_PORT:5672}
+    username: ${MALL_RABBIT_USER:mall}
+    password: ${MALL_RABBIT_PASS:mall@123}
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        server-addr: ${MALL_NACOS_ADDR:localhost:8848}
+        namespace: ${NACOS_NAMESPACE:}
+      # OP-9 配置中心（仅当 spring.config.import 非空时生效；默认不连）
+      config:
+        enabled: ${MALL_NACOS_CONFIG_ENABLED:false}
+        server-addr: ${MALL_NACOS_ADDR:localhost:8848}
+        file-extension: yaml
+        group: ${MALL_NACOS_CONFIG_GROUP:DEFAULT_GROUP}
+        refresh-enabled: true
+mall:
+  mock:
+    enabled: false
+  services:
+    user-url: ${MALL_SERVICES_USER_URL:http://localhost:8081}
+    shop-url: ${MALL_SERVICES_SHOP_URL:http://localhost:8082}
+  order:
+    delivery-fee: ${MALL_ORDER_DELIVERY_FEE:5.00}
+    pay-timeout-minutes: ${MALL_ORDER_PAY_TIMEOUT_MINUTES:15}
+    confirm-timeout-hours: ${MALL_ORDER_CONFIRM_TIMEOUT_HOURS:2}
+    # D6-B：true 走 RabbitMQ 延迟队列关单；删除此行或改 false 即回退 30s 扫描器
+    mq-timeout: ${MALL_ORDER_MQ_TIMEOUT:true}
+  event:
+    exchange: ${MALL_EVENT_EXCHANGE:x.order}
+    delayed-exchange: ${MALL_EVENT_DELAYED_EXCHANGE:x.order.delay}
+logging:
+  console:
+    encoding: UTF-8
+  level:
+    com.carl.mall: info    

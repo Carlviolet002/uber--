@@ -1,0 +1,31 @@
+# mall-sim 仿真器配置（非 Web 应用）
+spring:
+  main:
+    web-application-type: none
+  application:
+    name: mall-sim
+  cloud:
+    nacos:
+      discovery:
+        # dispatch 传递依赖了 nacos-discovery starter，仿真器必须显式关闭，
+        # 否则会尝试向 localhost:8848 注册并残留非守护线程导致 JVM 不退出
+        enabled: false
+
+mall:
+  mock:
+    enabled: true
+  dispatch:
+    weights:
+      # 与 dispatch 服务 application.yml 保持一致（匈牙利策略 C 的 @Value 权重键）
+      w1: ${MALL_DISPATCH_WEIGHTS_W1:1.0}
+      w2: ${MALL_DISPATCH_WEIGHTS_W2:0.5}
+      w3: ${MALL_DISPATCH_WEIGHTS_W3:500.0}
+      w4: ${MALL_DISPATCH_WEIGHTS_W4:0.0}
+      w5: ${MALL_DISPATCH_WEIGHTS_W5:0.0}
+    max-matrix: ${MALL_DISPATCH_MAX_MATRIX:20}
+
+logging:
+  level:
+    com.carl.mall: INFO
+  console:
+    encoding: UTF-8

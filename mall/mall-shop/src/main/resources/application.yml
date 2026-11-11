@@ -1,0 +1,54 @@
+server:
+  port: ${SERVER_PORT:8082}
+spring:
+  application:
+    name: mall-shop
+  profiles:
+    active: mock
+  datasource:
+    url: jdbc:h2:mem:mall_shop;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+  h2:
+    console:
+      enabled: true
+  cloud:
+    nacos:
+      discovery:
+        enabled: false
+      config:
+        enabled: false
+        import-check:
+          enabled: false
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+mall:
+  mock:
+    enabled: true
+  jwt:
+    secret: ${MALL_JWT_SECRET:mall-dispatch-bishe-jwt-secret-key-2026-carl-ok-1234567890}
+    ttl-minutes: ${MALL_JWT_TTL_MINUTES:4320}
+  services:
+    order-url: ${MALL_SERVICES_ORDER_URL:http://localhost:8083}
+
+# OP-5 可观测性：暴露健康检查与 Prometheus 指标端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always

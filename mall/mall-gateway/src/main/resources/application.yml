@@ -1,0 +1,59 @@
+server:
+  port: ${SERVER_PORT:8080}
+spring:
+  application:
+    name: mall-gateway
+  profiles:
+    active: mock
+  cloud:
+    nacos:
+      discovery:
+        enabled: false
+      config:
+        enabled: false
+        import-check:
+          enabled: false
+    gateway:
+      routes:
+        - id: mall-user-route
+          uri: ${MALL_SERVICES_USER_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=1
+        - id: mall-shop-route
+          uri: ${MALL_SERVICES_SHOP_URL:http://localhost:8082}
+          predicates:
+            - Path=/api/shop/**
+          filters:
+            - StripPrefix=1
+        - id: mall-order-route
+          uri: ${MALL_SERVICES_ORDER_URL:http://localhost:8083}
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - StripPrefix=1
+        - id: mall-dispatch-route
+          uri: ${MALL_SERVICES_DISPATCH_URL:http://localhost:8084}
+          predicates:
+            - Path=/api/dispatch/**
+          filters:
+            - StripPrefix=1
+        - id: mall-order-ws-route
+          uri: ${MALL_SERVICES_ORDER_URL:http://localhost:8083}
+          predicates:
+            - Path=/ws/**
+mall:
+  jwt:
+    secret: ${MALL_JWT_SECRET:mall-dispatch-bishe-jwt-secret-key-2026-carl-ok-1234567890}
+    whitelist: ${MALL_JWT_WHITELIST:/api/user/login,/api/user/register,/api/dispatch/rider/login,/actuator/**}
+
+# OP-5 可观测性：网关暴露健康检查与 Prometheus 指标端点（并加白名单免鉴权）
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always

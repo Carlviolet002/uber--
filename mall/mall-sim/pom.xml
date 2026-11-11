@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.carl</groupId>
+        <artifactId>mall-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>mall-sim</artifactId>
+    <name>mall-sim</name>
+    <description>派单策略离线仿真器：复用 mall-dispatch 三种策略，对比 A/B/C 在吞吐、超时、空驶、决策耗时上的差异</description>
+
+    <dependencies>
+        <!-- 公共模块：DTO / GEO / 距离工具 -->
+        <dependency>
+            <groupId>com.carl</groupId>
+            <artifactId>mall-common</artifactId>
+        </dependency>
+        <!-- 复用派单服务的三种策略实现 -->
+        <dependency>
+            <groupId>com.carl</groupId>
+            <artifactId>mall-dispatch</artifactId>
+        </dependency>
+        <!-- 非 Web 可执行应用（dispatch 传递依赖了 web starter，yml 里已关 Web 服务器） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.carl.mall.sim.MallSimApplication</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

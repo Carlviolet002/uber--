@@ -1,0 +1,57 @@
+spring:
+  # OP-9 Nacos 配置中心（默认关闭）：import 为空=不加载；设 MALL_NACOS_CONFIG_IMPORT=optional:nacos:mall-gateway.yml 启用
+  config:
+    import: ${MALL_NACOS_CONFIG_IMPORT:}
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        server-addr: ${MALL_NACOS_ADDR:localhost:8848}
+        namespace: ${NACOS_NAMESPACE:}
+      # OP-9 配置中心（仅当 spring.config.import 非空时生效；默认不连）
+      config:
+        enabled: ${MALL_NACOS_CONFIG_ENABLED:false}
+        server-addr: ${MALL_NACOS_ADDR:localhost:8848}
+        file-extension: yaml
+        group: ${MALL_NACOS_CONFIG_GROUP:DEFAULT_GROUP}
+        refresh-enabled: true
+    gateway:
+      routes:
+        - id: mall-user-route
+          uri: lb://mall-user
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=1
+        - id: mall-shop-route
+          uri: lb://mall-shop
+          predicates:
+            - Path=/api/shop/**
+          filters:
+            - StripPrefix=1
+        - id: mall-order-route
+          uri: lb://mall-order
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - StripPrefix=1
+        - id: mall-dispatch-route
+          uri: lb://mall-dispatch
+          predicates:
+            - Path=/api/dispatch/**
+          filters:
+            - StripPrefix=1
+        - id: mall-order-ws-route
+          uri: lb://mall-order
+          predicates:
+            - Path=/ws/**
+mall:
+  jwt:
+    # 与 mock 模式同值（必配：不补则 real 模式登录被 401 拦截）
+    secret: ${MALL_JWT_SECRET:mall-dispatch-bishe-jwt-secret-key-2026-carl-ok-1234567890}
+    whitelist: ${MALL_JWT_WHITELIST:/api/user/login,/api/user/register,/api/dispatch/rider/login}
+logging:
+  console:
+    encoding: UTF-8
+  level:
+    com.carl.mall: info    

@@ -1,0 +1,81 @@
+# ==================== mall-dispatch mock 配置（H2 + 无中间件，单机可跑） ====================
+server:
+  port: ${SERVER_PORT:8084}
+
+spring:
+  application:
+    name: mall-dispatch
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:mall_dispatch;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  cloud:
+    nacos:
+      discovery:
+        enabled: false
+      config:
+        enabled: false
+        import-check:
+          enabled: false
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+mall:
+  mock:
+    enabled: true
+  services:
+    user-url: ${MALL_SERVICES_USER_URL:http://localhost:8081}
+    order-url: ${MALL_SERVICES_ORDER_URL:http://localhost:8083}
+  dispatch:
+    strategy: ${MALL_DISPATCH_STRATEGY:B}
+    batch-interval-ms: ${MALL_DISPATCH_BATCH_INTERVAL_MS:5000}
+    batch-initial-delay-ms: ${MALL_DISPATCH_BATCH_INITIAL_DELAY_MS:15000}
+    max-matrix: ${MALL_DISPATCH_MAX_MATRIX:20}
+    weights:
+      w1: ${MALL_DISPATCH_WEIGHTS_W1:1.0}
+      w2: ${MALL_DISPATCH_WEIGHTS_W2:0.5}
+      w3: ${MALL_DISPATCH_WEIGHTS_W3:500.0}
+      w4: ${MALL_DISPATCH_WEIGHTS_W4:0.0}
+      w5: ${MALL_DISPATCH_WEIGHTS_W5:0.0}
+    # OP-6 策略 B 多因子权重（可被 t_dispatch_config 的 dispatch.bWeight.* 热覆盖）
+    b-weights:
+      distance: ${MALL_DISPATCH_BW_DISTANCE:1.0}
+      load: ${MALL_DISPATCH_BW_LOAD:0.3}
+      fairness: ${MALL_DISPATCH_BW_FAIRNESS:0.2}
+
+logging:
+  level:
+    com.carl.mall: info
+
+# OP-5 可观测性：暴露健康检查与 Prometheus 指标端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+  health:
+    rabbit:
+      enabled: false
+    redis:
+      enabled: false
